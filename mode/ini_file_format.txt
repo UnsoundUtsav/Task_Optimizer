@@ -1,0 +1,73 @@
+BACKGROUND TASK OPTIMIZER - .INI CONFIGURATION GUIDE
+====================================================
+
+OVERVIEW
+--------
+Configuration files define rules for automatically managing Windows processes. 
+Each .ini file represents a mode (Gaming, Work, etc.) and must be placed in the "mode" folder.
+
+BASIC STRUCTURE
+---------------
+[RULE1]
+description = What this rule does
+condition_task = process1.exe
+terminate_task = process2.exe
+mode = permanent
+
+REQUIRED PARAMETERS
+-------------------
+SECTION NAME: [RULE#] where # is unique identifier
+description: Human-readable description
+condition_task: Process(es) that trigger the rule (comma-separated)
+terminate_task: Process(es) to terminate when rule activates
+mode: Currently only "permanent" supported
+
+OPTIONAL PARAMETERS
+-------------------
+restart_task: Specific processes to restart (default: auto-restart terminated processes)
+restart_delay: Seconds to wait before restarting (default: 0)
+dynamic_restart: Auto-restart when condition becomes false (default: true)
+
+HOW IT WORKS
+------------
+1. CONDITION ACTIVATION: Any process in condition_task runs → Rule activates
+2. TERMINATION: All processes in terminate_task are killed
+3. DEACTIVATION: All condition_task processes stop → Rule deactivates
+4. RESTART: After delay, processes are automatically restarted
+
+FINDING PROCESS NAMES
+---------------------
+To identify the correct process name for any task:
+1. Open Task Manager (Ctrl+Shift+Esc)
+2. Right-click on the process
+3. Select "Properties"
+4. The actual executable name appears in the properties window
+Example: "Gaming Services" task uses "gameservices.exe"
+
+COMPLETE EXAMPLES
+-----------------
+[RULE_GAMING]
+description = Optimize system for gaming
+condition_task = game.exe
+terminate_task = onedrive.exe,spotify.exe
+restart_delay = 3
+
+[RULE_WORK]
+description = Block distractions during work
+condition_task = excel.exe,winword.exe
+terminate_task = steam.exe,discord.exe
+dynamic_restart = true
+
+BEST PRACTICES
+--------------
+- Always include .exe extension
+- Use comma-separated lists for multiple processes
+- Test rules incrementally
+- Use descriptive rule names like [RULE_GAMING]
+- Verify process names in Task Manager Properties
+
+TROUBLESHOOTING
+---------------
+Process won't terminate: Check exact name in Task Manager Properties
+Rule not activating: Verify condition_task spelling and .exe extension
+Process won't restart: Some applications require admin rights or specific paths
